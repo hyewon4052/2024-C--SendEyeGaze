@@ -1,0 +1,37 @@
+﻿  Main.cpp
+C:\Users\hyewo\OneDrive\바탕 화면\project\SendEyeGaze\SendEyeGaze\Main.cpp(136,31): warning C4244: '초기화 중': 'T'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              T=unsigned int
+          ]
+C:\Users\hyewo\OneDrive\바탕 화면\project\SendEyeGaze\SendEyeGaze\Main.cpp(137,27): warning C4244: '초기화 중': 'T'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              T=unsigned int
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xmemory(677,68): warning C4244: '인수': '_Ty'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\vector(798,27): message : 컴파일되는 함수 템플릿 인스턴스화 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,sf::Texture&,float&,int>(_Alloc &,_Objty *const ,sf::Texture &,float &,int &&)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Alloc=std::allocator<Man>,
+              _Ty=Man,
+              _Objty=Man
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\vector(780,20): message : 컴파일되는 함수 템플릿 인스턴스화 '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_back_with_unused_capacity<sf::Texture&,float&,int>(sf::Texture &,float &,int &&)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Ty=Man
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\vector(862,24): message : 컴파일되는 함수 템플릿 인스턴스화 '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<sf::Texture&,float&,int>(sf::Texture &,float &,int &&)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Ty=Man
+          ]
+C:\Users\hyewo\OneDrive\바탕 화면\project\SendEyeGaze\SendEyeGaze\Main.cpp(132,16): message : 컴파일되는 함수 템플릿 인스턴스화 'void std::vector<Man,std::allocator<Man>>::emplace_back<sf::Texture&,float&,int>(sf::Texture &,float &,int &&)'에 대한 참조를 확인하세요.
+  SendEyeGaze.vcxproj -> C:\Users\hyewo\OneDrive\바탕 화면\project\SendEyeGaze\x64\Debug\SendEyeGaze.exe
+  'pwsh.exe'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+  배치 파일이 아닙니다.
