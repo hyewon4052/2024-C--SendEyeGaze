@@ -1,21 +1,21 @@
-#include "StartScreen.h"
+ï»¿#include "StartScreen.h"
 
 using namespace sf;
 
 bool startGame() {
     RenderWindow window(VideoMode(1000, 700), "Start Screen");
 
-    // ¹è°æ ÀÌ¹ÌÁö ·Îµå
+    // ë°°ê²½ ì´ë¯¸ì§€ ë¡œë“œ
     Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("graphics/StartBackground.png")) {
         return false;
     }
     Sprite backgroundSprite(backgroundTexture);
 
-    // Start ¹öÆ° »ı¼º
+    // Start ë²„íŠ¼ ìƒì„±
     
     RectangleShape startButton(Vector2f(150, 50));
-    startButton.setPosition(525, 220);
+    startButton.setPosition(425, 465);
 
     Font font;
     if (!font.loadFromFile("fonts/Pretendard-Bold.otf")) {
@@ -24,10 +24,10 @@ bool startGame() {
 
     Text startText("Start", font, 24);
     startText.setFillColor(Color::Black);
-    startText.setPosition(575, 230); // ¹öÆ° ³»ºÎ¿¡ ÅØ½ºÆ®¸¦ ¹èÄ¡
+    startText.setPosition(475, 475); // ë²„íŠ¼ ë‚´ë¶€ì— í…ìŠ¤íŠ¸ë¥¼ ë°°ì¹˜
     startButton.setFillColor(Color::Transparent);
-    startButton.setOutlineThickness(3);          // Å×µÎ¸® µÎ²² ¼³Á¤
-    startButton.setOutlineColor(Color::Black);   // Å×µÎ¸® »ö»ó ¼³Á¤
+    startButton.setOutlineThickness(3);          // í…Œë‘ë¦¬ ë‘ê»˜ ì„¤ì •
+    startButton.setOutlineColor(Color::Black);   // í…Œë‘ë¦¬ ìƒ‰ìƒ ì„¤ì •
 
     while (window.isOpen()) {
         Event event;
@@ -36,7 +36,7 @@ bool startGame() {
                 window.close();
             else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 if (startButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-                    return true; // Start ¹öÆ° Å¬¸¯
+                    return true; // Start ë²„íŠ¼ í´ë¦­
                 }
             }
         }

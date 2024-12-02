@@ -4,16 +4,22 @@
 #include <ctime>
 #include <iostream>
 #include <set>
+#include "Result.h"
 
 using namespace sf;
 using namespace std;
 
-vector<Sprite> depletedMenSprites;
+
+vector<string> newMenNames;
+
+vector<string> getNewMenNames() {
+    return newMenNames;
+}
 
 // 주인공 캐릭터
 class Character {
 public:
-    const Sprite& getSprite() const {
+    const Sprite& getSprite() {
         return sprite;
     }
 
@@ -70,11 +76,11 @@ private:
     Sprite sprite;
 };
 
-// 남자 캐릭터
+
 // 남자 캐릭터
 class Man {
 public:
-    Texture croppedTexture;
+    float gaugeIncrease;  // 각 캐릭터의 게이지 증가 값
 
     Man(Texture& texture, float x, float y, const string& characterName)
         : speed(100.0f), directionChangeInterval(2.0f), elapsedTime(0.0f), stopped(false), gauge(100.0f), gaugeVisible(false), name(characterName) {
@@ -89,11 +95,11 @@ public:
             throw runtime_error("멈춤 이미지 로드 실패");
         }
 
-        if (!croppedTexture.loadFromFile("graphics/manHead.png")) {
-            throw runtime_error("크롭된 남자 이미지 로드 실패");
-        }
-
         originalTexture = texture;
+
+        // 랜덤으로 게이지 증가 값 설정 (2 ~ 17 범위)
+        gaugeIncrease = static_cast<float>(rand() % 16 + 2); // 2 ~ 17 사이의 값
+
     }
 
     // 남자 캐릭터 업데이트
@@ -108,7 +114,7 @@ public:
 
         // 게이지 0.1초마다 증가
         if (gaugeIncreaseClock.getElapsedTime().asSeconds() >= 0.1f) {
-            gauge = min(100.0f, gauge + 5.0f); // 0.1초마다 5만큼 증가
+            gauge = min(100.0f, gauge + gaugeIncrease); // 0.1초마다 5만큼 증가
             gaugeIncreaseClock.restart();    // 게이지 증가 타이머 리셋
         }
 
@@ -116,8 +122,9 @@ public:
         gauge = max(0.0f, gauge - deltaTime * 10); // 게이지 자연 감소
 
 
-        // 방향 주기적으로 변경 (랜덤)
-        if (elapsedTime >= directionChangeInterval) {
+        // elapsedTime : 방향 변경까지의 경과 시간
+        // 방향 주기적으로 변경
+        if (elapsedTime >= directionChangeInterval) {   
             direction = (rand() % 2 == 0) ? -1 : 1;
             updateSpriteScale();
             elapsedTime = 0.0f;
@@ -166,16 +173,12 @@ public:
             window.draw(gaugeFill);
         }
 
-        // 이름 표시
-        Text nameText;
-        nameText.setFont(font);
-        nameText.setCharacterSize(72);
-        nameText.setFillColor(Color::White);
-        nameText.setString(name);  // 랜덤으로 부여된 이름을 표시
-        nameText.setPosition(sprite.getPosition().x - nameText.getLocalBounds().width / 2, sprite.getPosition().y - 180);  // 이름 위치 조정
-        window.draw(nameText);
     }
 
+    // 방향에 따라 이미지 좌우 반전 처리
+    void updateSpriteScale() {
+        sprite.setScale((direction == -1) ? -1.0f : 1.0f, 1.0f);
+    }
 
     // 남자 캐릭터 클릭 시
     void handleMouseClick(const Vector2f& mousePosition) {
@@ -214,16 +217,11 @@ private:
     Font font;
     float gauge; // 게이지 상태
 
-    // 방향에 따라 이미지 좌우 반전 처리
-    void updateSpriteScale() {
-        sprite.setScale((direction == -1) ? -1.0f : 1.0f, 1.0f);
-    }
+    
 };
 
 
-// 변경된 runGame() 함수
 int runGame() {
-
 
     Texture manTexture, streetBackgroundTexture;
     if (!manTexture.loadFromFile("graphics/man.png")) {
@@ -257,40 +255,52 @@ int runGame() {
             cerr << "폰트 로드 실패" << endl;
             return -1;
         }
-        timerText.setFont(font); // 텍스트에 폰트 설정
+        timerText.setFont(font); 
 
-        Clock gameClock; // 게임 시작 시각
-        const int timeLimit = 60; // 제한 시간(초)
+        Clock gameClock;
+        const int timeLimit = 60; // 제한 시간
 
         Sprite spriteBackground;
         spriteBackground.setTexture(textureBackground);
         spriteBackground.setPosition(0, 0);
-        // 여자 캐릭터 생성 (항상 화면 중앙에 위치)
+
+        // 여자 캐릭터 생성 (항상 화면 중앙에)
         Character character("graphics/girlRight.png", "graphics/girlLeft.png", 500, 280.0f);
 
-        Clock clock;    // 시간 측정용 SFML Clock
-        // 이름 배열 생성
-        vector<string> names = { "가언", "지수", "지영", "지현", "민선", "예지", "민서", "수아", "하영", "민경", "수빈", "여은", "다율", "은서", "현지" };
-        set<string> usedNames; // 이미 사용된 이름을 저장하는 집합
+        Clock clock;
 
+        // 랜덤으로 주어질 남자 캐릭터들의 이름
+        string names[] = {
+            "Gaye", "Jisu", "Jiyoung", "Jihyun", "Minsun", "Yeji", "Minseo",
+            "Sua", "Hayoung", "Minkyung", "Subin", "Yeoeun", "Dayul", "Eunseo",
+            "Hyunji", "Hyewon", "Gaeun", "Yeonu", "Hanim", "Jaehee", "Yebin",
+            "Onyu", "Chohee", "Jiwon", "Eunse", "Hani", "Yejin", "Suin",
+            "Hanseol", "Hongjun", "Seojin", "Chaeun", "Yunbi", "Nayoung", "Soyun"
+        };
+
+        set<string> usedNames;  // 이미 사용된 이름
         vector<Man> men;
 
+        // 난수 생성 시 시드 설정
+        srand(time(0));
+
         auto createMen = [&]() {
-            men.clear(); // 기존 남자 캐릭터 제거
-            random_shuffle(names.begin(), names.end()); // 이름을 섞음
+            men.clear();  // 기존 남자 캐릭터 제거
             for (int i = 0; i < 5; i++) {
-                // 새로운 이름을 선택할 때, 이미 사용된 이름은 제외
                 string chosenName;
                 do {
-                    chosenName = names[i];
-                } while (usedNames.find(chosenName) != usedNames.end());  // 이미 사용된 이름은 다시 선택하지 않음
+                    // 랜덤 인덱스를 선택 (배열의 크기 범위 내에서)
+                    int randomIndex = rand() % (sizeof(names) / sizeof(names[0]));
+                    chosenName = names[randomIndex];
+                } while (usedNames.find(chosenName) != usedNames.end());  // 이름 중복 안되게
 
-                usedNames.insert(chosenName); // 사용한 이름을 집합에 추가
+                usedNames.insert(chosenName);  // 사용한 이름을 집합에 추가
 
-                float randomX = static_cast<float>(rand() % static_cast<int>(textureBackground.getSize().x));
-                men.emplace_back(manTexture, randomX, 450, chosenName); // 랜덤으로 이름을 부여
+                float randomX = static_cast<float>(rand() % 1300); 
+                men.emplace_back(manTexture, randomX, 450, chosenName); 
                 cout << "남자 캐릭터 " << i + 1 << "의 이름: " << chosenName << endl;
             }
+            cout << "" << endl;
         };
         createMen();
 
@@ -323,7 +333,8 @@ int runGame() {
 
             // 남은 시간이 0이면 게임 종료
             if (remainingTime <= 0) {
-                window.close();
+                result();  
+                window.close();  // 게임 창을 닫음
             }
 
             // 텍스트 업데이트
@@ -362,21 +373,13 @@ int runGame() {
                 man.moveWithBackground(offsetX);
             }
 
-            // 남자 캐릭터들 중 게이지가 0 이하인 캐릭터를 우측 상단에 자른 이미지로 표시
-            float xPosition = window.getSize().x - 71; // 초기 x값 설정 (우측 상단에 위치)
+       
             vector<Man> remainingMen;  // 죽지 않은 남자 캐릭터들을 저장할 벡터
 
             for (auto& man : men) {
                 if (man.getGauge() <= 0.0f) {
-                    
-                    // 게이지가 0 이하인 남자 캐릭터는 자른 이미지를 우측 상단에 추가
-                    Sprite croppedSprite(man.croppedTexture);
-                    croppedSprite.setPosition(xPosition, 0); // x값은 증가하면서 이미지 추가
-                    window.draw(croppedSprite);
-
-                    // xPosition을 증가시켜 다음 이미지가 오른쪽으로 배치되게 함
-                    xPosition += 71; // 이미지 크기만큼 x값 증가
                     cout << "내 새로운 친구 : " << man.getName() << endl;
+                    newMenNames.push_back(man.getName());
                 }
                 else {
                     // 게이지가 0 이하가 아니면 남자 캐릭터 유지
@@ -387,10 +390,6 @@ int runGame() {
             // men 벡터를 남은 캐릭터들로 업데이트
             men = remainingMen;
 
-            // 우측 상단에 자른 이미지 그리기
-            for (const auto& sprite : depletedMenSprites) {
-                window.draw(sprite);
-            }
 
             window.clear();
             window.draw(spriteBackground);
@@ -402,8 +401,6 @@ int runGame() {
             for (auto& man : men) {
                 man.draw(window);
             }
-
-
 
             window.display();
         }
